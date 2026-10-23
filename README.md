@@ -4,9 +4,9 @@ A Python-based ETL (Extract, Transform, Load) pipeline that processes e-commerce
 
 ## Project Overview
 
-This project demonstrates a basic data engineering workflow using Python, Pandas, SQLAlchemy, and PostgreSQL.
+This project demonstrates a data engineering workflow using Python, Pandas, SQLAlchemy, and PostgreSQL.
 
-The pipeline extracts order records from a CSV file, standardizes the data, validates records against defined business rules, calculates tax and total amounts, and loads the results into CSV files and PostgreSQL tables.
+The pipeline extracts order records from a CSV file, standardizes the data, validates records against business rules, calculates tax and total amounts, and loads the results into CSV files and PostgreSQL tables.
 
 ## Architecture
 
@@ -22,24 +22,24 @@ Clean and Standardize
     v
 Validate Data
     |
-    +--------------------+
-    |                    |
-    v                    v
-Valid Records       Rejected Records
-    |                    |
-    v                    |
-Transform                |
-    |                    |
-    +----------+---------+
-               |
-               v
-       Load to CSV Files
-               |
-               v
-       Load to PostgreSQL
-               |
-               v
-      Verify Record Counts
+    +---------------------+
+    |                     |
+    v                     v
+Valid Records        Rejected Records
+    |
+    v
+Transform
+    |
+    +---------------------+
+                          |
+                          v
+                   Load to CSV Files
+                          |
+                          v
+                   Load to PostgreSQL
+                          |
+                          v
+                  Verify Record Counts
 ```
 
 ## Technologies Used
@@ -51,38 +51,39 @@ Transform                |
 - psycopg2
 - python-dotenv
 - Python logging
+- Jupyter Notebook
 
 ## Project Structure
 
 ```text
-python-ecommerce-etl/
-├── .env                  # Local database credentials (not committed)
+python-ecommerce-etl-pipeline/
 ├── .gitignore
-├── requirements.txt
 ├── README.md
+├── requirements.txt
 ├── data/
 │   └── orders.csv
 ├── output/
 │   ├── processed_orders.csv
 │   └── rejected_orders.csv
-├── logs/
 └── src/
-    └── pipeline.ipynb    # ETL implementation and execution
+    └── pipeline.ipynb
 ```
+
+The `.env` file is created locally and is not committed to GitHub.
 
 ## Pipeline Steps
 
 ### 1. Extract
 
-- Reads the source order data from `data/orders.csv`.
+- Reads source order data from `data/orders.csv`.
 - Logs the extraction process and record count.
 - Handles missing input files.
 
 ### 2. Clean and Standardize
 
-- Standardizes column names by removing surrounding whitespace and converting them to lowercase.
-- Removes surrounding whitespace from customer names.
-- Standardizes customer names and order statuses.
+- Removes surrounding whitespace from column names and converts them to lowercase.
+- Cleans customer names and standardizes their capitalization.
+- Standardizes order statuses.
 - Converts amounts to numeric values, coercing invalid values to null.
 - Converts order dates into datetime values, coercing invalid dates to null.
 
@@ -101,7 +102,7 @@ Invalid records are separated into a rejected dataset. Both occurrences of a dup
 
 ### 4. Transform
 
-For valid records, the pipeline calculates a 5% tax and the total order amount.
+For valid records, the pipeline calculates a 5% tax and total order amount.
 
 - **Tax:** `amount × 0.05`
 - **Total amount:** `amount + tax`
@@ -118,13 +119,13 @@ It also loads the datasets into PostgreSQL tables:
 - `processed_orders`
 - `rejected_orders`
 
-The current implementation uses `if_exists="replace"`, so the tables are replaced on each successful load.
+The current implementation uses `if_exists="replace"`, meaning the tables are replaced when the data is loaded.
 
 ### 6. Logging and Reconciliation
 
-The pipeline logs extraction, cleaning, validation, transformation, loading, and failure events.
-
-It also verifies that the number of valid records plus rejected records equals the source record count.
+- Logs extraction, cleaning, validation, transformation, loading, and failure events.
+- Checks that valid and rejected record counts add up to the source record count.
+- Handles database connection and loading errors.
 
 ## Sample Data Quality Results
 
@@ -136,15 +137,16 @@ The supplied sample dataset contains 15 source records.
 | Valid and processed | 8 |
 | Rejected | 7 |
 
-The reconciliation check is:
-
-`15 = 8 + 7`
+**Reconciliation:** `15 = 8 + 7`
 
 These results correspond to the supplied sample data and validation rules.
 
 ## Prerequisites
 
-Install Python and PostgreSQL. Ensure the PostgreSQL server is running and that you have credentials for a database you can access.
+- Python
+- PostgreSQL
+- Git
+- VS Code or Jupyter Notebook
 
 ## Setup and Installation
 
@@ -152,16 +154,16 @@ Install Python and PostgreSQL. Ensure the PostgreSQL server is running and that 
 
 ```bash
 git clone https://github.com/nareshkumars-mit/python-ecommerce-etl-pipeline.git
-cd python-ecommerce-etl
+cd python-ecommerce-etl-pipeline
 ```
 
-### 2. Create and activate a virtual environment
+### 2. Create a virtual environment
 
 ```bash
 python -m venv .venv
 ```
 
-On Windows:
+Activate it on Windows:
 
 ```bash
 .venv\Scripts\activate
@@ -171,6 +173,12 @@ On Windows:
 
 ```bash
 pip install -r requirements.txt
+```
+
+If Jupyter Notebook is not already installed, install it with:
+
+```bash
+pip install notebook
 ```
 
 ### 4. Configure database credentials
@@ -185,15 +193,15 @@ DB_USER=your_postgres_username
 DB_PASSWORD=your_postgres_password
 ```
 
-Replace the example values with your local PostgreSQL configuration.
+Replace the example values with your local PostgreSQL configuration. Ensure PostgreSQL is running and the database credentials are valid.
 
 **Security:** Never commit `.env` or actual database credentials to GitHub. The project uses `python-dotenv` to load local environment variables.
 
 ### 5. Run the notebook
 
-Open `src/pipeline.ipynb` in VS Code or Jupyter Notebook, select your Python environment, and run the cells in order.
+Open `src/pipeline.ipynb` in VS Code or Jupyter Notebook, select the virtual environment, and run the cells in order.
 
-Ensure that the notebook's project-root detection matches your working directory.
+The notebook expects the project root to be identified correctly so it can locate the `data`, `output`, and `.env` files.
 
 ### 6. Verify the PostgreSQL results
 
@@ -205,7 +213,7 @@ SELECT COUNT(*) FROM processed_orders;
 SELECT COUNT(*) FROM rejected_orders;
 ```
 
-For the supplied sample data, the expected counts are 8 and 7, respectively.
+For the supplied sample data, the expected counts are 8 processed records and 7 rejected records.
 
 ## Error Handling and Data Quality
 
@@ -221,9 +229,9 @@ The project includes:
 
 ## Future Improvements
 
-- Move reusable ETL functions from the notebook into a standalone Python module.
-- Add automated unit tests with `pytest`.
-- Implement structured rejection reasons for each invalid record.
+- Move reusable ETL functions into a standalone Python module.
+- Add automated unit tests using `pytest`.
+- Implement structured rejection reasons for invalid records.
 - Use database transactions and safer incremental loading.
 - Add command-line configuration and environment-specific settings.
 - Introduce orchestration and scheduling for automated pipeline runs.
