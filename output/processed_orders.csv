@@ -1,0 +1,9 @@
+order_id,customer,amount,status,order_date,tax,total_amount
+1001,Naresh,2500.0,completed,2026-10-01,125.0,2625.0
+1003,Priya,3200.0,pending,2026-10-03,160.0,3360.0
+1005,Divya,1500.0,cancelled,2026-10-05,75.0,1575.0
+1007,Rahul,4200.0,completed,2026-10-07,210.0,4410.0
+1010,Anu,2800.0,completed,2026-10-10,140.0,2940.0
+1011,Sanjay,3500.0,completed,2026-10-11,175.0,3675.0
+1012,Latha,1200.0,pending,2026-10-12,60.0,1260.0
+1014,Deepa,2600.0,completed,2026-10-14,130.0,2730.0
