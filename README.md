@@ -28,7 +28,7 @@ Validate Data
 Valid Records       Rejected Records
     |                    |
     v                    |
-Transform                 |
+Transform                |
     |                    |
     +----------+---------+
                |
