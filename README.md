@@ -26,10 +26,10 @@ Validate Data
     |                     |
     v                     v
 Valid Records        Rejected Records
-    |
-    v
-Transform
-    |
+    |                     |
+    v                     |
+Transform                 |
+    |                     |
     +---------------------+
                           |
                           v
