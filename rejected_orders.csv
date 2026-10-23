@@ -1,0 +1,8 @@
+order_id,customer,amount,status,order_date
+1002,Arun,1800.0,completed,2026-10-02
+1004,Karthik,0.0,completed,2026-10-04
+1006,Meena,,completed,2026-10-06
+1008,,2100.0,completed,2026-10-08
+1009,Vijay,900.0,unknown,2026-10-09
+1002,Arun,1800.0,completed,2026-10-02
+1013,Manoj,-500.0,completed,2026-10-13
